@@ -3,9 +3,9 @@
 import config
 import telebot
 #import logging
-from telebot import apihelper
+#from telebot import apihelper
 
-apihelper.proxy = config.proxy
+#apihelper.proxy = config.proxy
 
 #logger = telebot.logger
 #telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
