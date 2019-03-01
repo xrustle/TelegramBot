@@ -1,39 +1,31 @@
 # -*- coding: utf-8 -*-
 
 import config
+import db
 import telebot
-#from telebot import apihelper
+from telebot import apihelper
 
-#apihelper.proxy = config.proxy
+apihelper.proxy = config.proxy
 
 bot = telebot.TeleBot(config.token)
 
-knownUsers = []
-userStep = {}
+db.createtable()
 
 commands = {
-    'start'       : 'Познакомиться с ботом',
-    'help'        : 'Получить информацию о доступных командах',
+    'start'   : 'Познакомиться с ботом',
+    'help'    : 'Получить информацию о доступных командах',
 }
-
-def get_user_step(uid):
-    if uid in userStep:
-        return userStep[uid]
-    else:
-        knownUsers.append(uid)
-        userStep[uid] = 0
-        return 0
 
 @bot.message_handler(commands=['start'])
 def command_start(m):
     cid = m.chat.id
-    if cid not in knownUsers:  # if user hasn't used the "/start" command yet:
-        knownUsers.append(cid)  # save user id, so you could brodcast messages to all users of this bot later
-        userStep[cid] = 0  # save user id and his current "command level", so he can use the "/getImage" command
+    if db.exist(cid):  # if user hasn't used the "/start" command yet:
+        bot.send_message(cid, "О! Привет! А я тебя уже знаю!")
+    else:
+        db.insert(m.chat, 0)  # save user id, so you could brodcast messages to all users of this bot later
         bot.send_message(cid, "Привет, рад знакомству!")
         command_help(m)
-    else:
-        bot.send_message(cid, "О! Привет! А я тебя уже знаю!")
+        
 
 @bot.message_handler(commands=['help'])
 def command_help(m):
