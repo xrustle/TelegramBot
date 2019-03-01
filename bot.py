@@ -12,6 +12,11 @@ import telebot
 
 bot = telebot.TeleBot(config.token)
 
+commands = {  # command description used in the "help" command
+	'start'       : 'Get used to the bot',
+	'help'        : 'Gives you information about the available commands',
+}
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     bot.reply_to(message, """Мой тестовый бот, развернутый на Heroku""")
