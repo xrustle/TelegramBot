@@ -2,22 +2,18 @@
 
 import config
 import telebot
-#import logging
 #from telebot import apihelper
 
 #apihelper.proxy = config.proxy
 
-#logger = telebot.logger
-#telebot.logger.setLevel(logging.DEBUG) # Outputs debug messages to console.
-
 bot = telebot.TeleBot(config.token)
 
-knownUsers = []  # todo: save these in a file,
-userStep = {}  # so they won't reset every time the bot restarts
+knownUsers = []
+userStep = {}
 
-commands = {  # command description used in the "help" command
-    'start'       : 'Get used to the bot',
-    'help'        : 'Gives you information about the available commands',
+commands = {
+    'start'       : 'Познакомиться с ботом',
+    'help'        : 'Получить информацию о доступных командах',
 }
 
 def get_user_step(uid):
@@ -26,7 +22,6 @@ def get_user_step(uid):
     else:
         knownUsers.append(uid)
         userStep[uid] = 0
-        print("New user detected, who hasn't used \"/start\" yet")
         return 0
 
 @bot.message_handler(commands=['start'])
@@ -35,16 +30,15 @@ def command_start(m):
     if cid not in knownUsers:  # if user hasn't used the "/start" command yet:
         knownUsers.append(cid)  # save user id, so you could brodcast messages to all users of this bot later
         userStep[cid] = 0  # save user id and his current "command level", so he can use the "/getImage" command
-        bot.send_message(cid, "Hello, stranger, let me scan you...")
-        bot.send_message(cid, "Scanning complete, I know you now")
-        command_help(m)  # show the new user the help page
+        bot.send_message(cid, "Привет, рад знакомству!")
+        command_help(m)
     else:
-        bot.send_message(cid, "I already know you, no need for me to scan you again!")
+        bot.send_message(cid, "О! Привет! А я тебя уже знаю!")
 
 @bot.message_handler(commands=['help'])
 def command_help(m):
     cid = m.chat.id
-    help_text = "The following commands are available: \n"
+    help_text = "Сейчас доступны вот такие команды: \n"
     for key in commands:  # generate help text out of the commands dictionary defined at the top
         help_text += "/" + key + ": "
         help_text += commands[key] + "\n"
