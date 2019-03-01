@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 token = '617409655:AAE_rwH6q7VHvmuyU8swt7ekFTvZ8XJUeLI'
-proxy = {'https':'socks5://telegram:autopassword@auto.socks5.ss5.ch:1090'}
+#proxy = {'https':'socks5://telegram:autopassword@auto.socks5.ss5.ch:1090'}
 
 #You can use proxy for request. apihelper.proxy object will use by call requests proxies argument.
 #
