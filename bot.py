@@ -54,5 +54,4 @@ def command_help(m):
 def repeat_all_messages(message): # Название функции не играет никакой роли, в принципе
     bot.send_message(message.chat.id, "Вы написали: " + message.text)
 
-bot.send_chat_action(cid, 'typing')
 bot.polling()
