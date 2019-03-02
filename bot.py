@@ -10,6 +10,7 @@ import telebot
 bot = telebot.TeleBot(config.token)
 
 c = db.db()
+c.createtable()
 
 commands = {
     'start'   : 'Познакомиться с ботом',
