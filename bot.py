@@ -9,7 +9,7 @@ import telebot
 
 bot = telebot.TeleBot(config.token)
 
-db.createtable()
+c = db.db()
 
 commands = {
     'start'   : 'Познакомиться с ботом',
@@ -19,10 +19,10 @@ commands = {
 @bot.message_handler(commands=['start'])
 def command_start(m):
     cid = m.chat.id
-    if db.exist(cid):  # if user hasn't used the "/start" command yet:
+    if c.exist(cid):  # if user hasn't used the "/start" command yet:
         bot.send_message(cid, "О! Привет! А я тебя уже знаю!")
     else:
-        db.insert(m.chat, 0)  # save user id, so you could brodcast messages to all users of this bot later
+        c.insert(m.chat, 0)  # save user id, so you could brodcast messages to all users of this bot later
         bot.send_message(cid, "Привет, рад знакомству!")
         command_help(m)
         

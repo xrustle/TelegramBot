@@ -1,50 +1,44 @@
-import sqlite3
-import config
+import os
+import psycopg2
 
-def createtable():
-	conn = sqlite3.connect(config.dbfile)
-	c = conn.cursor()
-	c.execute('''CREATE TABLE IF NOT EXISTS USERS 
-		(ID INTEGER PRIMARY KEY,
-		FIRST_NAME TEXT,
-		LAST_NAME TEXT,
-		USERNAME TEXT,
-		STEP INTEGER DEFAULT 0)''')
-	conn.commit()
-	conn.close()
+class db():
+	def __init__(self):
+		self.conn = psycopg2.connect(os.environ['DATABASE_URL'], sslmode='require')
+		#self.conn = psycopg2.connect(host="localhost",database="xrustle", user="postgres", password="postgres")
+		self.conn.autocommit = True
 
-def exist(id):
-	conn = sqlite3.connect(config.dbfile)
-	c = conn.cursor()
-	for row in c.execute('SELECT * FROM USERS WHERE ID=?', (id,)):
-		ret = True
-		break
-	else:
-		ret = False
-	conn.close()
-	return ret
+	def __del__(self):
+		self.conn.close()
 
-def step(id):
-	conn = sqlite3.connect(config.dbfile)
-	c = conn.cursor()
-	ret = c.execute('SELECT * FROM USERS WHERE ID=?', (id,)).fetchone()[4]
-	conn.close()
-	return ret
+	def createtable(self):
+		self.c = self.conn.cursor()
+		self.c.execute('''CREATE TABLE IF NOT EXISTS USERS 
+			(ID INTEGER PRIMARY KEY,
+			FIRST_NAME VARCHAR(255),
+			LAST_NAME VARCHAR(255),
+			USERNAME VARCHAR(255),
+			STEP INTEGER DEFAULT 0);''')
 
-def insert(chat, step):
-	conn = sqlite3.connect(config.dbfile)
-	c = conn.cursor()
-	for row in c.execute('SELECT * FROM USERS WHERE ID=?', (chat.id,)):
-		c.execute('UPDATE users SET FIRST_NAME = ?, LAST_NAME = ?, USERNAME = ?, STEP = ? WHERE id = ?;', (chat.first_name, chat.last_name, chat.username, step, chat.id))
-		break
-	else:
-		c.execute('INSERT INTO users VALUES (?, ?, ?, ?, ?)', (chat.id, chat.first_name, chat.last_name, chat.username, step))
-	conn.commit()
-	conn.close()
+	def exist(self, id):
+		self.c = self.conn.cursor()
+		self.c.execute('SELECT * FROM USERS WHERE ID=%s;', (id,))
+		return self.c.fetchone() is not None
 
-def show():
-	conn = sqlite3.connect(config.dbfile)
-	c = conn.cursor()
-	for row in c.execute('SELECT * FROM USERS'):
-		print(row)
-	conn.close()
+	def step(self, id):
+		self.c = self.conn.cursor()
+		self.c.execute('SELECT * FROM USERS WHERE ID=%s;', (id,))
+		return self.c.fetchone()[4]
+
+	def insert(self, chat, step):
+		self.c = self.conn.cursor()
+		self.c.execute('SELECT * FROM USERS WHERE ID=%s;', (chat.id,))
+		if self.c.fetchone() is not None:
+			self.c.execute('UPDATE USERS SET FIRST_NAME = %s, LAST_NAME = %s, USERNAME = %s, STEP = %s WHERE id = %s;', (chat.first_name, chat.last_name, chat.username, step, chat.id))
+		else:
+			self.c.execute('INSERT INTO USERS (ID, FIRST_NAME, LAST_NAME, USERNAME, STEP) VALUES (%s, %s, %s, %s, %s);', (chat.id, chat.first_name, chat.last_name, chat.username, step))
+
+	def show(self):
+		self.c = self.conn.cursor()
+		self.c.execute('SELECT * FROM USERS;')
+		for row in self.c.fetchall():
+			print(row)
