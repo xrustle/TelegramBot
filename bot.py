@@ -30,17 +30,17 @@ modes = {
 def get_coord_set(w, h, cid):
     mode = c.step(cid)
     areas = []
+    n = 1 #номер плитки слева направо
     if mode%2 and w < 2 * h or not mode%2 and 5 * w < 8 * h:
         bot.send_message(cid, 'Picture is not wide enough. I can not even cut it into two parts.')
     else:
         k2 = (mode-1)%3 #0 for Left, 1 for Middle, 2 for Right
         step = h + (mode%2 -1) * h // 5 #При mode%2 = 0 сдвигаем на пятую высоты. Шаг будет 4/5
         x0 = k2 * (w % step) // 2 #Координата x - начало старта
-        n = 1 #номер плитки слева направо
         while w >= n * step:
             areas.append((x0 + (n - 1) * step, 0, x0 + n * step, h))
             n += 1
-        areas.insert(0, n-1)
+    areas.insert(0, n-1)
     return areas
 
 def mode_first_set():
