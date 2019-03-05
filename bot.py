@@ -94,7 +94,7 @@ def command_start(m):
 @bot.message_handler(commands=['help'])
 def command_help(m):
     cid = m.chat.id
-    help_text = "InstaSplit bot will easy split up your panorama into multiple square tiles or pieces 4x5 for post those photos to Instagram as part of a single post. Use /mode to change cutting mode.\n\nSend me a photo as a 'File' to process."
+    help_text = "InstaSplit bot will easy split up your panorama into multiple square tiles or pieces 4x5 for post those photos to Instagram as part of a single post. Use /mode to change cutting mode. By default, the photos will be squares and the bot will start cutting from the left side.\n\nSend me a photo as a 'File' to process."
     bot.send_message(cid, help_text)  # send the generated help page
 
 @bot.message_handler(content_types=['document'])
