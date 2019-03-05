@@ -19,16 +19,16 @@ c = db.db()
 c.createtable()
 
 modes = {
-    1: 'Square tiles + Left', #[ i*i for i in range(1,10)]
-    2: 'Rectangles 4x5 + Left',
-    3: 'Square tiles + Middle',
-    4: 'Rectangles 4x5 + Middle',
-    5: 'Square tiles + Right',
-    6: 'Rectangles 4x5 + Right'
+    1: 'Square tiles + Left alignment', #[ i*i for i in range(1,10)]
+    2: 'Rectangles 4x5 + Left alignment',
+    3: 'Square tiles + Middle alignment',
+    4: 'Rectangles 4x5 + Middle alignment',
+    5: 'Square tiles + Right alignment',
+    6: 'Rectangles 4x5 + Right alignment'
 }
 
 def get_coord_set(w, h, cid):
-    mode = c.step(cid)
+    mode = c.mode(cid)
     areas = []
     n = 1 #номер плитки слева направо
     if mode%2 and w < 2 * h or not mode%2 and 5 * w < 8 * h:
@@ -76,7 +76,7 @@ def query_handler(call):
         elif call.data == '-2':
             bot.edit_message_text(chat_id=cid, message_id=mid, text='Mode changed to Rectangles 4x5. Choose how to align a set of cut photos:', reply_markup = mode_second_set(2))
         elif int(call.data) > 0:
-            c.insert(call.message.chat, int(call.data))
+            c.insert(call.message.chat, 'MODE', int(call.data))
             bot.edit_message_text(chat_id=cid, message_id=mid, text='Mode changed to ' + modes[int(call.data)] + ".\nSend me a picture as a 'File'.")
 
 @bot.message_handler(commands=['start'])
@@ -85,7 +85,7 @@ def command_start(m):
     if not c.exist(cid):  # if user hasn't used the "/start" command yet:
         bot.send_message(cid, 'Hello, stranger, let me scan you...')
         bot.send_chat_action(cid, 'typing')
-        c.insert(m.chat, 1)
+        c.insert(m.chat, 'MODE', 1)
         bot.send_message(cid, 'Scanning complete, I know you now.')
         command_help(m)
     else:
@@ -109,7 +109,7 @@ def handle_document(m):
             frmt = img.format
             w, h = img.size
             if not c.exist(cid):
-                c.insert(m.chat, 1)
+                c.insert(m.chat, 'MODE', 1)
             areas = get_coord_set(w, h, cid)
             num = areas.pop(0)
             if num > 1:
@@ -131,7 +131,7 @@ def handle_document(m):
 
 @bot.message_handler(content_types=['photo'])
 def handle_photo(m):
-    bot.send_message(m.chat.id, 'Please send me a picture as a File, not as a Photo.')
+    bot.send_message(m.chat.id, "Please send me a picture as a 'File', not as a 'Photo'.")
 
 @bot.message_handler(content_types=["text"])
 def repeat_all_messages(m):

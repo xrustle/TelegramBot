@@ -17,25 +17,32 @@ class db():
 			FIRST_NAME VARCHAR(255),
 			LAST_NAME VARCHAR(255),
 			USERNAME VARCHAR(255),
-			STEP INTEGER DEFAULT 0);''')
+			MODE INTEGER DEFAULT 1,
+			LANG INTEGER DEFAULT 0);''')
 
 	def exist(self, id):
 		self.c = self.conn.cursor()
 		self.c.execute('SELECT * FROM USERS WHERE ID=%s;', (id,))
 		return self.c.fetchone() is not None
 
-	def step(self, id):
+	def get_value(self, id, field_number):
 		self.c = self.conn.cursor()
 		self.c.execute('SELECT * FROM USERS WHERE ID=%s;', (id,))
-		return self.c.fetchone()[4]
+		return self.c.fetchone()[field_number]	
 
-	def insert(self, chat, step):
+	def mode(self, id):
+		return self.get_value(id, 4)
+
+	def lang(self, id):
+		return self.get_value(id, 5)	
+
+	def insert(self, chat, param, value):
 		self.c = self.conn.cursor()
 		self.c.execute('SELECT * FROM USERS WHERE ID=%s;', (chat.id,))
 		if self.c.fetchone() is not None:
-			self.c.execute('UPDATE USERS SET FIRST_NAME = %s, LAST_NAME = %s, USERNAME = %s, STEP = %s WHERE id = %s;', (chat.first_name, chat.last_name, chat.username, step, chat.id))
+			self.c.execute('UPDATE USERS SET FIRST_NAME = %s, LAST_NAME = %s, USERNAME = %s, ' + param + ' = %s WHERE id = %s;', (chat.first_name, chat.last_name, chat.username, value, chat.id))
 		else:
-			self.c.execute('INSERT INTO USERS (ID, FIRST_NAME, LAST_NAME, USERNAME, STEP) VALUES (%s, %s, %s, %s, %s);', (chat.id, chat.first_name, chat.last_name, chat.username, step))
+			self.c.execute('INSERT INTO USERS (ID, FIRST_NAME, LAST_NAME, USERNAME, ' + param + ') VALUES (%s, %s, %s, %s, %s);', (chat.id, chat.first_name, chat.last_name, chat.username, value))
 
 	def show(self):
 		self.c = self.conn.cursor()
