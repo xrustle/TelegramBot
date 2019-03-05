@@ -40,7 +40,7 @@ def get_coord_set(w, h, cid):
         while w >= n * step:
             areas.append((x0 + (n - 1) * step, 0, x0 + n * step, h))
             n += 1
-        areas.insert(0, n)
+        areas.insert(0, n-1)
     return areas
 
 def mode_first_set():
