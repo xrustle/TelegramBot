@@ -124,7 +124,7 @@ def handle_document(m):
                 bot.send_document(cid, bio)
             if num > 1:
                 bot.send_message(cid, "That's it!\nSend another photo or try to change /mode.")
-        except (e):
+        except:
             bot.send_message(cid, 'Unknown error:( Try again or text me. @batorov')
     else:
         bot.send_message(cid, 'Please send static panoramic image file.')
